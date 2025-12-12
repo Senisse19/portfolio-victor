@@ -2,13 +2,15 @@
 
 import { motion } from "framer-motion";
 import { ExternalLink, Sparkles } from "lucide-react";
+import Image from "next/image";
 
 interface Project {
     title: string;
     description: string;
     technologies: string[];
     link: string;
-    gradient: string;
+    gradient?: string;
+    coverImage?: string;
     featured: boolean;
 }
 
@@ -16,9 +18,23 @@ const projects: Project[] = [
     {
         title: "Elara Software",
         description: "Plataforma completa para criação de agentes de IA sob medida. Automatiza atendimento, qualifica leads 24/7 e impulsiona vendas através de agentes conversacionais inteligentes.",
-        technologies: ["React", "Next.js", "TypeScript", "Framer Motion", "AI/ML"],
+        technologies: [
+            "ElevenLabs",
+            "N8N",
+            "Retell AI",
+            "Integração Asaas",
+            "Google Workspace",
+            "Chatwoot",
+            "Supabase",
+            "PostgreSQL",
+            "Javascript",
+            "API WhatsApp",
+            "API REST",
+            "OpenAI",
+            "Engenharia de Prompt"
+        ],
         link: "https://elarasoftware.com.br",
-        gradient: "from-blue-500 via-purple-500 to-pink-500",
+        coverImage: "/elara-cover.png",
         featured: true,
     },
 ];
@@ -50,12 +66,29 @@ export default function Projects() {
                             whileHover={{ y: -10 }}
                             className="group bg-background rounded-2xl overflow-hidden border border-white/5 hover:border-primary/50 transition-all shadow-xl"
                         >
-                            {/* Project Header with Gradient */}
-                            <div className={`h-48 bg-gradient-to-br ${project.gradient} relative overflow-hidden flex items-center justify-center`}>
-                                <Sparkles size={48} className="text-white/90 group-hover:scale-110 transition-transform duration-300" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-40" />
+                            {/* Project Cover */}
+                            <div className="h-48 relative overflow-hidden">
+                                {project.coverImage ? (
+                                    <>
+                                        <Image
+                                            src={project.coverImage}
+                                            alt={project.title}
+                                            fill
+                                            className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                            priority={project.featured}
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent z-[1]" />
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className={`h-full bg-gradient-to-br ${project.gradient} flex items-center justify-center`}>
+                                            <Sparkles size={48} className="text-white/90 group-hover:scale-110 transition-transform duration-300" />
+                                        </div>
+                                        <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-40" />
+                                    </>
+                                )}
                                 {project.featured && (
-                                    <div className="absolute top-4 right-4 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-xs font-semibold">
+                                    <div className="absolute top-4 right-4 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-xs font-semibold z-[2]">
                                         ⭐ Projeto Principal
                                     </div>
                                 )}
