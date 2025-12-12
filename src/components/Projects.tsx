@@ -17,7 +17,7 @@ interface Project {
 const projects: Project[] = [
     {
         title: "Elara Software",
-        description: "Plataforma completa para criação de agentes de IA sob medida. Automatiza atendimento, qualifica leads 24/7 e impulsiona vendas através de agentes conversacionais inteligentes.",
+        description: "Agente de IA que automatiza atendimento, qualifica leads 24/7 e impulsiona vendas através de agentes conversacionais inteligentes.",
         technologies: [
             "ElevenLabs",
             "N8N",
