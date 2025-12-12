@@ -25,7 +25,7 @@ export default function Footer() {
 
                 <div className="flex items-center gap-4">
                     <a
-                        href="https://github.com"
+                        href="https://github.com/Senisse19"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-2 bg-surface rounded-full text-gray-400 hover:text-white hover:bg-primary transition-all"

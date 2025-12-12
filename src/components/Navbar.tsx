@@ -75,6 +75,14 @@ export default function Navbar() {
                         </Link>
                     ))}
                     <a
+                        href="https://github.com/Senisse19"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-sm font-semibold rounded-full transition-all shadow-[0_0_15px_rgba(107,114,128,0.5)] hover:shadow-[0_0_25px_rgba(107,114,128,0.7)]"
+                    >
+                        GitHub
+                    </a>
+                    <a
                         href="https://www.linkedin.com/in/victorsenisse/"
                         target="_blank"
                         rel="noopener noreferrer"
@@ -113,6 +121,14 @@ export default function Navbar() {
                                     {link.name}
                                 </Link>
                             ))}
+                            <a
+                                href="https://github.com/Senisse19"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-full text-center px-4 py-2 bg-gray-800 text-white font-semibold rounded-lg hover:bg-gray-700 transition-colors"
+                            >
+                                GitHub
+                            </a>
                             <a
                                 href="https://www.linkedin.com/in/victorsenisse/"
                                 target="_blank"
