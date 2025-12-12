@@ -1,9 +1,27 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Folder, ExternalLink, Github } from "lucide-react";
+import { ExternalLink, Sparkles } from "lucide-react";
 
-const projects = [1, 2, 3, 4]; // Placeholders
+interface Project {
+    title: string;
+    description: string;
+    technologies: string[];
+    link: string;
+    gradient: string;
+    featured: boolean;
+}
+
+const projects: Project[] = [
+    {
+        title: "Elara Software",
+        description: "Plataforma completa para criação de agentes de IA sob medida. Automatiza atendimento, qualifica leads 24/7 e impulsiona vendas através de agentes conversacionais inteligentes.",
+        technologies: ["React", "Next.js", "TypeScript", "Framer Motion", "AI/ML"],
+        link: "https://elarasoftware.com.br",
+        gradient: "from-blue-500 via-purple-500 to-pink-500",
+        featured: true,
+    },
+];
 
 export default function Projects() {
     return (
@@ -22,7 +40,7 @@ export default function Projects() {
                 </motion.div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                    {projects.map((_, index) => (
+                    {projects.map((project, index) => (
                         <motion.div
                             key={index}
                             initial={{ opacity: 0, y: 20 }}
@@ -32,27 +50,46 @@ export default function Projects() {
                             whileHover={{ y: -10 }}
                             className="group bg-background rounded-2xl overflow-hidden border border-white/5 hover:border-primary/50 transition-all shadow-xl"
                         >
-                            {/* Project Image Placeholder */}
-                            <div className="h-48 bg-surface/50 relative overflow-hidden group-hover:bg-surface/80 transition-colors flex items-center justify-center">
-                                <Folder size={40} className="md:w-12 md:h-12 text-white/20 group-hover:text-primary/50 transition-colors" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-60" />
+                            {/* Project Header with Gradient */}
+                            <div className={`h-48 bg-gradient-to-br ${project.gradient} relative overflow-hidden flex items-center justify-center`}>
+                                <Sparkles size={48} className="text-white/90 group-hover:scale-110 transition-transform duration-300" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-40" />
+                                {project.featured && (
+                                    <div className="absolute top-4 right-4 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-xs font-semibold">
+                                        ⭐ Projeto Principal
+                                    </div>
+                                )}
                             </div>
 
                             <div className="p-5 md:p-6">
                                 <h3 className="text-lg md:text-xl font-bold text-white mb-2 group-hover:text-primary transition-colors">
-                                    Projeto Exemplo {index + 1}
+                                    {project.title}
                                 </h3>
-                                <p className="text-gray-400 text-sm mb-6">
-                                    Descrição breve do projeto. Uma solução de arquitetura de IA utilizando LLMs e n8n.
+                                <p className="text-gray-400 text-sm mb-4 leading-relaxed">
+                                    {project.description}
                                 </p>
 
+                                {/* Technologies */}
+                                <div className="flex flex-wrap gap-2 mb-6">
+                                    {project.technologies.map((tech, techIndex) => (
+                                        <span
+                                            key={techIndex}
+                                            className="px-2 py-1 bg-surface/50 text-blue-400 text-xs rounded-md border border-blue-500/20"
+                                        >
+                                            {tech}
+                                        </span>
+                                    ))}
+                                </div>
+
                                 <div className="flex items-center gap-4">
-                                    <button className="flex items-center gap-2 text-sm text-white bg-surface hover:bg-primary px-4 py-2 rounded-lg transition-colors">
-                                        <ExternalLink size={16} /> Demo
-                                    </button>
-                                    <button className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
-                                        <Github size={16} /> Código
-                                    </button>
+                                    <a
+                                        href={project.link}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-2 text-sm text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 px-4 py-2 rounded-lg transition-all"
+                                    >
+                                        <ExternalLink size={16} /> Visitar Site
+                                    </a>
                                 </div>
                             </div>
                         </motion.div>
