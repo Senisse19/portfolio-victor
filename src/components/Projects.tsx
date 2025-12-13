@@ -37,6 +37,37 @@ const projects: Project[] = [
         coverImage: "/elara-cover.png",
         featured: true,
     },
+    {
+        title: "Chatwoot Data Extractor",
+        description: "Aplicação desktop que extrai e analisa conversas do Chatwoot com filtros por usuário e data. Integrada com IA via n8n para gerar métricas automatizadas de SLA, tempo de resposta, volume de atendimentos, produtividade da equipe e insights estratégicos.",
+        technologies: [
+            "Python",
+            "PyQt6",
+            "Chatwoot API",
+            "N8N",
+            "Google Drive API",
+            "Análise de IA"
+        ],
+        link: "https://github.com/Senisse19/scraper-historico-chatwoot",
+        coverImage: "/chatwoot-extractor.png",
+        featured: false,
+    },
+    {
+        title: "GS Agenda RT - Dashboard BI",
+        description: "Dashboard Business Intelligence alimentado por Google Sheets com filtros dinâmicos e visualização de dados estratégicos. Integrado com agente de IA via n8n que analisa dados e envia métricas e insights semanais automaticamente por email aos colaboradores.",
+        technologies: [
+            "TypeScript",
+            "HTML",
+            "Tailwind CSS",
+            "Vite",
+            "N8N",
+            "Google Workspace",
+            "Google Sheets API"
+        ],
+        link: "https://gs-agenda-rt.vercel.app/",
+        coverImage: "/gs-agenda-cover.png",
+        featured: false,
+    },
 ];
 
 export default function Projects() {
