@@ -3,8 +3,10 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Mail } from "lucide-react";
 import Image from "next/image";
-import Scene3D from "./Scene3D";
+import dynamic from "next/dynamic";
 import { useLanguage } from "@/context/LanguageContext";
+
+const Scene3D = dynamic(() => import("./Scene3D"), { ssr: false });
 
 export default function Hero() {
     const { t } = useLanguage();

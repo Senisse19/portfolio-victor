@@ -21,26 +21,36 @@ export default function Navbar() {
     ], [t]);
 
     useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 20);
+        let timeoutId: NodeJS.Timeout | undefined;
 
-            // Section Highlight Logic
-            const sections = navLinks.map(link => link.href.substring(1));
-            let current = "";
-            for (const section of sections) {
-                const element = document.getElementById(section);
-                if (element) {
-                    const rect = element.getBoundingClientRect();
-                    if (rect.top <= 100 && rect.bottom >= 100) {
-                        current = section;
+        const handleScroll = () => {
+            if (timeoutId) return;
+
+            timeoutId = setTimeout(() => {
+                setIsScrolled(window.scrollY > 20);
+
+                // Section Highlight Logic
+                const sections = navLinks.map(link => link.href.substring(1));
+                let current = "";
+                for (const section of sections) {
+                    const element = document.getElementById(section);
+                    if (element) {
+                        const rect = element.getBoundingClientRect();
+                        if (rect.top <= 100 && rect.bottom >= 100) {
+                            current = section;
+                        }
                     }
                 }
-            }
-            setActiveSection(current);
+                setActiveSection(current);
+                timeoutId = undefined;
+            }, 100);
         };
 
         window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+            if (timeoutId) clearTimeout(timeoutId);
+        };
     }, [navLinks]);
 
     const toggleLanguage = () => {
