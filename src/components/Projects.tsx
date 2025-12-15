@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { ExternalLink, Sparkles } from "lucide-react";
 import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface Project {
     title: string;
@@ -14,63 +15,65 @@ interface Project {
     featured: boolean;
 }
 
-const projects: Project[] = [
-    {
-        title: "Elara Software",
-        description: "Agente de IA que automatiza atendimento, qualifica leads 24/7 e impulsiona vendas através de agentes conversacionais inteligentes.",
-        technologies: [
-            "ElevenLabs",
-            "N8N",
-            "Retell AI",
-            "Integração Asaas",
-            "Google Workspace",
-            "Chatwoot",
-            "Supabase",
-            "PostgreSQL",
-            "Javascript",
-            "API WhatsApp",
-            "API REST",
-            "OpenAI",
-            "Engenharia de Prompt"
-        ],
-        link: "https://elarasoftware.com.br",
-        coverImage: "/elara-cover.png",
-        featured: true,
-    },
-    {
-        title: "Chatwoot Data Extractor",
-        description: "Aplicação desktop que extrai e analisa conversas do Chatwoot com filtros por usuário e data. Integrada com IA via n8n para gerar métricas automatizadas de SLA, tempo de resposta, volume de atendimentos, produtividade da equipe e insights estratégicos.",
-        technologies: [
-            "Python",
-            "PyQt6",
-            "Chatwoot API",
-            "N8N",
-            "Google Drive API",
-            "Análise de IA"
-        ],
-        link: "https://github.com/Senisse19/scraper-historico-chatwoot",
-        coverImage: "/chatwoot-extractor.png",
-        featured: false,
-    },
-    {
-        title: "GS Agenda RT - Dashboard BI",
-        description: "Dashboard Business Intelligence alimentado por Google Sheets com filtros dinâmicos e visualização de dados estratégicos. Integrado com agente de IA via n8n que analisa dados e envia métricas e insights semanais automaticamente por email aos colaboradores.",
-        technologies: [
-            "TypeScript",
-            "HTML",
-            "Tailwind CSS",
-            "Vite",
-            "N8N",
-            "Google Workspace",
-            "Google Sheets API"
-        ],
-        link: "https://gs-agenda-rt.vercel.app/",
-        coverImage: "/gs-agenda-cover.png",
-        featured: false,
-    },
-];
-
 export default function Projects() {
+    const { t } = useLanguage();
+
+    const projects: Project[] = [
+        {
+            title: t.projects.items[0].title,
+            description: t.projects.items[0].description,
+            technologies: [
+                "ElevenLabs",
+                "N8N",
+                "Retell AI",
+                "Integração Asaas",
+                "Google Workspace",
+                "Chatwoot",
+                "Supabase",
+                "PostgreSQL",
+                "Javascript",
+                "API WhatsApp",
+                "API REST",
+                "OpenAI",
+                "Engenharia de Prompt"
+            ],
+            link: "https://elarasoftware.com.br",
+            coverImage: "/elara-cover.png",
+            featured: true,
+        },
+        {
+            title: t.projects.items[1].title,
+            description: t.projects.items[1].description,
+            technologies: [
+                "Python",
+                "PyQt6",
+                "Chatwoot API",
+                "N8N",
+                "Google Drive API",
+                "Análise de IA"
+            ],
+            link: "https://github.com/Senisse19/scraper-historico-chatwoot",
+            coverImage: "/chatwoot-extractor.png",
+            featured: false,
+        },
+        {
+            title: t.projects.items[2].title,
+            description: t.projects.items[2].description,
+            technologies: [
+                "TypeScript",
+                "HTML",
+                "Tailwind CSS",
+                "Vite",
+                "N8N",
+                "Google Workspace",
+                "Google Sheets API"
+            ],
+            link: "https://gs-agenda-rt.vercel.app/",
+            coverImage: "/gs-agenda-cover.png",
+            featured: false,
+        },
+    ];
+
     return (
         <section id="projects" className="py-16 md:py-24 bg-surface/30">
             <div className="max-w-7xl mx-auto px-6">
@@ -81,9 +84,9 @@ export default function Projects() {
                     className="text-center mb-16"
                 >
                     <div className="inline-block px-3 py-1 bg-surface rounded-full text-blue-400 text-sm font-medium mb-4">
-                        Portfólio
+                        {t.projects.badge}
                     </div>
-                    <h2 className="text-2xl md:text-5xl font-bold text-white">Projetos em Destaque</h2>
+                    <h2 className="text-2xl md:text-5xl font-bold text-white">{t.projects.title}</h2>
                 </motion.div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
@@ -120,7 +123,7 @@ export default function Projects() {
                                 )}
                                 {project.featured && (
                                     <div className="absolute top-4 right-4 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-xs font-semibold z-[2]">
-                                        ⭐ Projeto Principal
+                                        ⭐ {t.projects.featured}
                                     </div>
                                 )}
                             </div>
@@ -152,7 +155,7 @@ export default function Projects() {
                                         rel="noopener noreferrer"
                                         className="flex items-center gap-2 text-sm text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 px-4 py-2 rounded-lg transition-all"
                                     >
-                                        <ExternalLink size={16} /> Visitar Site
+                                        <ExternalLink size={16} /> {t.buttons.visitSite}
                                     </a>
                                 </div>
                             </div>

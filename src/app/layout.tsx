@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Sora } from "next/font/google"; // Import Sora
 import "./globals.css";
+import { Providers } from "@/components/Providers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,7 +34,7 @@ export default function RootLayout({
         <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body className={`${inter.variable} ${sora.variable} font-sans antialiased bg-background text-foreground`}>
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

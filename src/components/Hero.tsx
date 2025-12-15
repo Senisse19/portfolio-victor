@@ -4,8 +4,11 @@ import { motion } from "framer-motion";
 import { ArrowRight, Mail } from "lucide-react";
 import Image from "next/image";
 import Scene3D from "./Scene3D";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function Hero() {
+    const { t } = useLanguage();
+
     return (
         <section className="relative h-screen w-full flex items-center justify-center overflow-hidden">
             {/* 3D Background */}
@@ -35,9 +38,9 @@ export default function Hero() {
                     transition={{ delay: 0.2, duration: 0.8 }}
                     className="text-3xl md:text-6xl font-bold font-display text-white tracking-tight mb-4"
                 >
-                    Engenheiro de Software <br className="hidden md:block" />
+                    {t.hero.role} <br className="hidden md:block" />
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-primary">
-                        na Era da IA Generativa
+                        {t.hero.headline}
                     </span>
                 </motion.h1>
 
@@ -47,7 +50,7 @@ export default function Hero() {
                     transition={{ delay: 0.4, duration: 0.8 }}
                     className="text-base md:text-xl text-gray-300 max-w-2xl mx-auto mb-8 md:mb-10 leading-relaxed font-light"
                 >
-                    Desenvolvedor de Soluções Autônomas. Transformando desafios de negócios em sistemas inteligentes através da orquestração de Agentes e LLMs.
+                    {t.hero.bio}
                 </motion.p>
 
                 <motion.div
@@ -60,13 +63,13 @@ export default function Hero() {
                         href="#projects"
                         className="px-6 py-3 md:px-8 md:py-4 bg-primary text-white rounded-full font-semibold transition-transform hover:scale-105 flex items-center gap-2 shadow-[0_4px_14px_0_rgba(59,130,246,0.39)] text-sm md:text-base"
                     >
-                        Ver Soluções <ArrowRight size={20} />
+                        {t.buttons.viewSolutions} <ArrowRight size={20} />
                     </a>
                     <a
                         href="mailto:senissevictor@gmail.com"
                         className="px-6 py-3 md:px-8 md:py-4 bg-surface text-gray-200 border border-white/10 rounded-full font-semibold transition-all hover:bg-surface/80 hover:border-primary/50 flex items-center gap-2 text-sm md:text-base"
                     >
-                        Entre em Contato <Mail size={20} />
+                        {t.buttons.contact} <Mail size={20} />
                     </a>
                 </motion.div>
             </div>

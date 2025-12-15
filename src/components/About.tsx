@@ -2,8 +2,11 @@
 
 import { motion } from "framer-motion";
 import { User, Code, Brain } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function About() {
+    const { t } = useLanguage();
+
     return (
         <section id="about" className="py-16 md:py-24 bg-background relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-10 md:gap-16 items-center">
@@ -17,16 +20,16 @@ export default function About() {
                 >
                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-surface rounded-full text-primary text-sm font-medium mb-6">
                         <User size={14} className="md:w-4 md:h-4" />
-                        <span>Sobre Mim</span>
+                        <span>{t.about.badge}</span>
                     </div>
                     <h2 className="text-2xl md:text-5xl font-bold text-white mb-6">
-                        Engenharia com <span className="text-primary">Propósito</span>.
+                        {t.about.title} <span className="text-primary">{t.about.titleHighlight}</span>.
                     </h2>
                     <p className="text-gray-300 text-base md:text-lg leading-relaxed mb-6">
-                        Engenheiro de Software orientado a resultados, com trajetória marcada pela evolução do suporte técnico ao desenvolvimento back-end e arquitetura de soluções complexas de IA.
+                        {t.about.p1}
                     </p>
                     <p className="text-gray-300 text-base md:text-lg leading-relaxed">
-                        Foco em entrega de valor mensurável e visão estratégica de produto. Especialista em construir pontes entre desafios de negócios e soluções tecnológicas inovadoras.
+                        {t.about.p2}
                     </p>
                 </motion.div>
 
@@ -42,16 +45,16 @@ export default function About() {
                         <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-500/10 rounded-lg flex items-center justify-center text-primary mb-4">
                             <Brain size={20} className="md:w-6 md:h-6" />
                         </div>
-                        <h3 className="text-lg md:text-xl font-semibold text-white mb-2">AI Solutions</h3>
-                        <p className="text-gray-400 text-sm md:text-base">Implementação de agentes autônomos e RAG pipelines.</p>
+                        <h3 className="text-lg md:text-xl font-semibold text-white mb-2">{t.about.stats.aiSolutions}</h3>
+                        <p className="text-gray-400 text-sm md:text-base">{t.about.stats.aiDesc}</p>
                     </div>
 
                     <div className="bg-surface p-5 md:p-6 rounded-2xl border border-white/5 hover:border-primary/30 transition-colors">
                         <div className="w-10 h-10 md:w-12 md:h-12 bg-purple-500/10 rounded-lg flex items-center justify-center text-purple-400 mb-4">
                             <Code size={20} className="md:w-6 md:h-6" />
                         </div>
-                        <h3 className="text-lg md:text-xl font-semibold text-white mb-2">Full Stack</h3>
-                        <p className="text-gray-400 text-sm md:text-base">Desenvolvimento de sistemas robustos e escaláveis.</p>
+                        <h3 className="text-lg md:text-xl font-semibold text-white mb-2">{t.about.stats.fullStack}</h3>
+                        <p className="text-gray-400 text-sm md:text-base">{t.about.stats.fsDesc}</p>
                     </div>
                 </motion.div>
             </div>

@@ -1,35 +1,39 @@
 "use client";
 
 import { motion } from "framer-motion";
-
-const experiences = [
-    {
-        role: "Analista de Inteligência Artificial (PJ)",
-        company: "Grupo Studio",
-        period: "Atual",
-        description: "Desenvolvimento de modelos ML/NLP, criação de pipelines de dados e sistemas RAG. Integração de IA com sistemas corporativos, geração de dashboards preditivos e KPIs. Pesquisa e implementação de inovações em automação e ciência de dados.",
-    },
-    {
-        role: "Especialista em IA e n8n (PJ)",
-        company: "Brivia Group",
-        period: "Projetos Recentes",
-        description: "Criação de conteúdo sobre IA, desenvolvimento e integração de APIs, implementação de Multi-Agentes. Desenvolvimento de páginas estáticas e dinâmicas com ferramentas de IA.",
-    },
-    {
-        role: "Desenvolvedor Back-End",
-        company: "Zallpy Digital",
-        period: "10/2023 - 04/2025",
-        description: "Desenvolvimento e manutenção de sistemas backend para TK Elevator usando Progress 4GL. Liderança de projetos de automação e IA. Participação ativa em cerimônias Scrum e suporte a usuários nível 1.",
-    },
-    {
-        role: "Assistente de Help Desk",
-        company: "Tozzini Freire Advogados",
-        period: "12/2021 - 10/2023",
-        description: "Suporte técnico para 200+ usuários. Criação de VMs, clonagem de HDs, gestão de Active Directory e configuração de redes. Manutenção de infraestrutura e resolução de incidentes de TI.",
-    },
-];
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function Experience() {
+    const { t } = useLanguage();
+
+    // Map the translated roles to the structure needed for display, keeping the company names static as requested
+    const experiences = [
+        {
+            role: t.experience.roles[0].role,
+            company: "Grupo Studio",
+            period: t.experience.roles[0].period,
+            description: t.experience.roles[0].description,
+        },
+        {
+            role: t.experience.roles[1].role,
+            company: "Brivia Group",
+            period: t.experience.roles[1].period,
+            description: t.experience.roles[1].description,
+        },
+        {
+            role: t.experience.roles[2].role,
+            company: "Zallpy Digital",
+            period: t.experience.roles[2].period,
+            description: t.experience.roles[2].description,
+        },
+        {
+            role: t.experience.roles[3].role,
+            company: "Tozzini Freire Advogados",
+            period: t.experience.roles[3].period,
+            description: t.experience.roles[3].description,
+        },
+    ];
+
     return (
         <section id="experience" className="py-16 md:py-24 bg-background relative">
             <div className="max-w-4xl mx-auto px-6">
@@ -40,9 +44,9 @@ export default function Experience() {
                     className="text-center mb-16"
                 >
                     <div className="inline-block px-3 py-1 bg-surface rounded-full text-blue-400 text-sm font-medium mb-4">
-                        Trajetória
+                        {t.experience.badge}
                     </div>
-                    <h2 className="text-2xl md:text-5xl font-bold text-white">Experiência Profissional</h2>
+                    <h2 className="text-2xl md:text-5xl font-bold text-white">{t.experience.title}</h2>
                 </motion.div>
 
                 <div className="relative border-l border-white/10 ml-4 md:ml-0 md:pl-0 space-y-8 md:space-y-12">

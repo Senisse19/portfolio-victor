@@ -1,22 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Download, Globe, Github, Linkedin } from "lucide-react";
 import Link from "next/link";
 import clsx from "clsx";
-
-const navLinks = [
-    { name: "Sobre", href: "#about" },
-    { name: "Skills", href: "#skills" },
-    { name: "Experiência", href: "#experience" },
-    { name: "Projetos", href: "#projects" },
-];
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function Navbar() {
+    const { language, setLanguage, t } = useLanguage();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState("");
+
+    const navLinks = useMemo<{ name: string; href: string }[]>(() => [
+        { name: t.nav.about, href: "#about" },
+        { name: t.nav.skills, href: "#skills" },
+        { name: t.nav.experience, href: "#experience" },
+        { name: t.nav.projects, href: "#projects" },
+    ], [t]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -39,7 +41,21 @@ export default function Navbar() {
 
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+    }, [navLinks]);
+
+    const toggleLanguage = () => {
+        setLanguage(language === "pt" ? "en" : "pt");
+    };
+
+    const downloadResume = () => {
+        const url = language === "pt" ? "/curriculo-pt.pdf" : "/resume-en.pdf";
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = language === "pt" ? "Curriculo-Victor_Senisse.pdf" : "Resume-Victor_Senisse.pdf";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
 
     return (
         <nav
@@ -54,10 +70,10 @@ export default function Navbar() {
                 </Link>
 
                 {/* Desktop Nav */}
-                <div className="hidden md:flex items-center space-x-8">
+                <div className="hidden md:flex items-center space-x-6">
                     {navLinks.map((link) => (
                         <Link
-                            key={link.name}
+                            key={link.href}
                             href={link.href}
                             className={clsx(
                                 "text-sm font-medium transition-colors relative",
@@ -74,22 +90,43 @@ export default function Navbar() {
                             )}
                         </Link>
                     ))}
-                    <a
-                        href="https://github.com/Senisse19"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-sm font-semibold rounded-full transition-all shadow-[0_0_15px_rgba(107,114,128,0.5)] hover:shadow-[0_0_25px_rgba(107,114,128,0.7)]"
+
+                    <div className="h-6 w-[1px] bg-gray-700 mx-2" />
+
+                    <button
+                        onClick={toggleLanguage}
+                        className="flex items-center gap-2 text-sm font-medium text-gray-300 hover:text-white transition-colors"
                     >
-                        GitHub
-                    </a>
-                    <a
-                        href="https://www.linkedin.com/in/victorsenisse/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-4 py-2 bg-primary hover:bg-blue-600 text-white text-sm font-semibold rounded-full transition-all shadow-[0_0_15px_rgba(59,130,246,0.5)] hover:shadow-[0_0_25px_rgba(59,130,246,0.7)]"
+                        <Globe size={18} />
+                        <span>{language === "pt" ? "EN" : "PT"}</span>
+                    </button>
+
+                    <button
+                        onClick={downloadResume}
+                        className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-blue-600 text-white text-sm font-semibold rounded-full transition-all shadow-[0_0_15px_rgba(59,130,246,0.5)] hover:shadow-[0_0_25px_rgba(59,130,246,0.7)]"
                     >
-                        LinkedIn
-                    </a>
+                        <Download size={16} />
+                        <span>{t.buttons.downloadResume}</span>
+                    </button>
+
+                    <div className="hidden lg:flex items-center space-x-2">
+                        <a
+                            href="https://github.com/Senisse19"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-gray-800 p-2 text-white hover:text-primary rounded-full transition-colors"
+                        >
+                            <Github size={20} />
+                        </a>
+                        <a
+                            href="https://www.linkedin.com/in/victorsenisse/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-gray-800 p-2 text-white hover:text-primary rounded-full transition-colors"
+                        >
+                            <Linkedin size={20} />
+                        </a>
+                    </div>
                 </div>
 
                 {/* Mobile Menu Toggle */}
@@ -108,12 +145,12 @@ export default function Navbar() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="md:hidden bg-surface absolute top-full left-0 right-0 shadow-xl overflow-hidden"
+                        className="md:hidden bg-surface absolute top-full left-0 right-0 shadow-xl overflow-hidden border-t border-gray-800"
                     >
-                        <div className="flex flex-col p-6 space-y-4">
+                        <div className="flex flex-col p-6 space-y-4 bg-background/95 backdrop-blur-lg">
                             {navLinks.map((link) => (
                                 <Link
-                                    key={link.name}
+                                    key={link.href}
                                     href={link.href}
                                     className="text-base font-medium text-gray-300 hover:text-primary"
                                     onClick={() => setIsMobileMenuOpen(false)}
@@ -121,22 +158,49 @@ export default function Navbar() {
                                     {link.name}
                                 </Link>
                             ))}
-                            <a
-                                href="https://github.com/Senisse19"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="w-full text-center px-4 py-2 bg-gray-800 text-white font-semibold rounded-lg hover:bg-gray-700 transition-colors"
+
+                            <hr className="border-gray-800 my-2" />
+
+                            <button
+                                onClick={() => {
+                                    toggleLanguage();
+                                    setIsMobileMenuOpen(false);
+                                }}
+                                className="flex items-center space-x-2 text-base font-medium text-gray-300 hover:text-primary"
                             >
-                                GitHub
-                            </a>
-                            <a
-                                href="https://www.linkedin.com/in/victorsenisse/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="w-full text-center px-4 py-2 bg-primary text-white font-semibold rounded-lg"
+                                <Globe size={18} />
+                                <span>{language === "pt" ? "Mudar para Inglês" : "Switch to Portuguese"}</span>
+                            </button>
+
+                            <button
+                                onClick={() => {
+                                    downloadResume();
+                                    setIsMobileMenuOpen(false);
+                                }}
+                                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white font-semibold rounded-lg"
                             >
-                                LinkedIn
-                            </a>
+                                <Download size={18} />
+                                <span>{t.buttons.downloadResume}</span>
+                            </button>
+
+                            <div className="flex justify-center gap-4 pt-4">
+                                <a
+                                    href="https://github.com/Senisse19"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="bg-gray-800 p-2 text-white hover:text-primary rounded-full transition-colors"
+                                >
+                                    <Github size={20} />
+                                </a>
+                                <a
+                                    href="https://www.linkedin.com/in/victorsenisse/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="bg-gray-800 p-2 text-white hover:text-primary rounded-full transition-colors"
+                                >
+                                    <Linkedin size={20} />
+                                </a>
+                            </div>
                         </div>
                     </motion.div>
                 )}

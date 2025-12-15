@@ -1,8 +1,11 @@
 "use client";
 
 import { Github, Linkedin, Mail, MapPin } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function Footer() {
+    const { t } = useLanguage();
+
     return (
         <footer className="bg-background border-t border-white/5 py-12">
             <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
@@ -10,7 +13,7 @@ export default function Footer() {
                 <div className="text-center md:text-left">
                     <h3 className="text-xl font-bold text-white mb-2">Victor Senisse</h3>
                     <p className="text-gray-400 text-sm">
-                        © {new Date().getFullYear()} Desenvolvido por Victor Senisse.
+                        © {new Date().getFullYear()} {t.footer.developedBy}
                     </p>
                 </div>
 
@@ -19,7 +22,7 @@ export default function Footer() {
                         <Mail size={16} /> senissevictor@gmail.com
                     </a>
                     <div className="flex items-center gap-2 text-gray-400 text-sm">
-                        <MapPin size={16} /> Porto Alegre, RS
+                        <MapPin size={16} /> {t.footer.location}
                     </div>
                 </div>
 
