@@ -1,116 +1,144 @@
 "use client";
 
-import { useRef, useMemo } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import * as THREE from "three";
+import { Component, lazy, Suspense, useEffect, useRef, useState, type ReactNode } from "react";
+import { Canvas } from "@react-three/fiber";
+import { PerformanceMonitor } from "@react-three/drei";
+import NeuralNetwork from "./scene/NeuralNetwork";
+import { createSceneState, REDUCED_MOTION_PRESET, SCENE_PRESETS, type SceneState } from "./scene/sceneState";
+import { usePageVisible, usePrefersReducedMotion } from "./scene/useBrowserSignals";
+import { useScrollChoreography } from "./scene/useScrollChoreography";
 
-function NeuralNetwork({ count = 100, radius = 4 }) {
-    const points = useMemo(() => {
-        const p = new Float32Array(count * 3);
-        for (let i = 0; i < count; i++) {
-            const r = radius * Math.cbrt(Math.random());
-            const theta = Math.random() * 2 * Math.PI;
-            const phi = Math.acos(2 * Math.random() - 1);
-            p[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-            p[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-            p[i * 3 + 2] = r * Math.cos(phi);
-        }
-        return p;
-    }, [count, radius]);
+const SceneBloom = lazy(() => import("./scene/SceneBloom"));
 
-    const ref = useRef<THREE.Group>(null);
+const COMPACT_QUERY = "(max-width: 767px)";
+const FINE_POINTER_QUERY = "(pointer: fine)";
+const PARTICLES = { compact: 60, wide: 120 };
+const MAX_DPR = { compact: 1.5, wide: 2 };
+const MIN_DPR = 0.75;
 
-    // Connection logic
-    const connections = useMemo(() => {
-        const lines = [];
-        const threshold = 1.5;
+type DeviceProfile = {
+    isCompact: boolean;
+    hasFinePointer: boolean;
+    supportsWebGL: boolean;
+    maxDpr: number;
+    colors: { background: string; primary: string };
+};
 
-        for (let i = 0; i < count; i++) {
-            const x1 = points[i * 3];
-            const y1 = points[i * 3 + 1];
-            const z1 = points[i * 3 + 2];
+class CanvasBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+    state = { failed: false };
 
-            for (let j = i + 1; j < count; j++) {
-                const x2 = points[j * 3];
-                const y2 = points[j * 3 + 1];
-                const z2 = points[j * 3 + 2];
+    static getDerivedStateFromError() {
+        return { failed: true };
+    }
 
-                const dist = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) + Math.pow(z2 - z1, 2));
+    render() {
+        return this.state.failed ? null : this.props.children;
+    }
+}
 
-                if (dist < threshold) {
-                    lines.push(x1, y1, z1);
-                    lines.push(x2, y2, z2);
-                }
-            }
-        }
-        return new Float32Array(lines);
-    }, [points, count]);
+// Browsers cap live WebGL contexts, so the probe context is released instead of waiting for GC.
+function hasWebGL() {
+    try {
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("webgl2") || canvas.getContext("webgl");
+        context?.getExtension("WEBGL_lose_context")?.loseContext();
+        return Boolean(context);
+    } catch {
+        return false;
+    }
+}
 
-    useFrame((state, delta) => {
-        if (ref.current) {
-            ref.current.rotation.x -= delta / 30;
-            ref.current.rotation.y -= delta / 20;
-        }
-    });
+function readCssColor(variable: string, fallback: string) {
+    return getComputedStyle(document.documentElement).getPropertyValue(variable).trim() || fallback;
+}
 
-    return (
-        <group ref={ref} dispose={null}>
-            {/* Particles */}
-            <points>
-                <bufferGeometry>
-                    <bufferAttribute
-                        attach="attributes-position"
-                        count={points.length / 3}
-                        array={points}
-                        itemSize={3}
-                        args={[points, 3]}
-                    />
-                </bufferGeometry>
-                <pointsMaterial
-                    size={0.03}
-                    color="#3B82F6"
-                    sizeAttenuation
-                    transparent
-                    opacity={0.8}
-                    depthWrite={false}
-                />
-            </points>
+function detectDeviceProfile(): DeviceProfile {
+    const isCompact = window.matchMedia(COMPACT_QUERY).matches;
+    return {
+        isCompact,
+        hasFinePointer: window.matchMedia(FINE_POINTER_QUERY).matches,
+        supportsWebGL: hasWebGL(),
+        maxDpr: Math.min(window.devicePixelRatio || 1, isCompact ? MAX_DPR.compact : MAX_DPR.wide),
+        colors: {
+            background: readCssColor("--background", "#0C1423"),
+            primary: readCssColor("--primary", "#3B82F6"),
+        },
+    };
+}
 
-            {/* Connections */}
-            <lineSegments>
-                <bufferGeometry>
-                    <bufferAttribute
-                        attach="attributes-position"
-                        count={connections.length / 3}
-                        array={connections}
-                        itemSize={3}
-                        args={[connections, 3]}
-                    />
-                </bufferGeometry>
-                <lineBasicMaterial
-                    color="#3B82F6"
-                    transparent
-                    opacity={0.15}
-                    depthWrite={false}
-                />
-            </lineSegments>
-        </group>
-    );
+function usePointerParallax(scene: SceneState, isEnabled: boolean) {
+    useEffect(() => {
+        if (!isEnabled) return;
+        const handlePointerMove = (event: PointerEvent) => {
+            if (event.pointerType !== "mouse") return;
+            scene.pointerX = (event.clientX / window.innerWidth) * 2 - 1;
+            scene.pointerY = -((event.clientY / window.innerHeight) * 2 - 1);
+        };
+        window.addEventListener("pointermove", handlePointerMove, { passive: true });
+        return () => {
+            window.removeEventListener("pointermove", handlePointerMove);
+            scene.pointerX = 0;
+            scene.pointerY = 0;
+        };
+    }, [scene, isEnabled]);
 }
 
 export default function Scene3D() {
-    // Detect mobile for performance optimization
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-    const particleCount = isMobile ? 60 : 120;
+    const [device] = useState(detectDeviceProfile);
+    const prefersReducedMotion = usePrefersReducedMotion();
+    const isPageVisible = usePageVisible();
+    const [scene] = useState(() => createSceneState(SCENE_PRESETS.hero));
+    const [staticScene] = useState(() => createSceneState(REDUCED_MOTION_PRESET));
+    const [dpr, setDpr] = useState(device.maxDpr);
+    const [isBloomAllowed, setIsBloomAllowed] = useState(!device.isCompact);
+    const glowRef = useRef<HTMLDivElement>(null);
+
+    const isAnimated = !prefersReducedMotion;
+    useScrollChoreography(scene, glowRef, isAnimated);
+    usePointerParallax(scene, isAnimated && device.hasFinePointer && !device.isCompact);
+
+    const activeScene = isAnimated ? scene : staticScene;
+    const glowOpacity = isAnimated ? SCENE_PRESETS.hero.glow : REDUCED_MOTION_PRESET.glow;
+    const frameloop = !isPageVisible ? "never" : isAnimated ? "always" : "demand";
+
+    const adaptDpr = ({ factor }: { factor: number }) =>
+        setDpr(Math.round((MIN_DPR + factor * (device.maxDpr - MIN_DPR)) * 4) / 4);
 
     return (
-        <div className="absolute inset-0 -z-10 bg-background overflow-hidden">
-            {/* 2D Glow Layer */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
+        <div aria-hidden="true" data-neural-background className="fixed inset-0 -z-10 overflow-hidden bg-background pointer-events-none">
+            {device.supportsWebGL && (
+                <CanvasBoundary>
+                    <Canvas
+                        // R3F forces pointer-events: auto on its wrapper, overriding the inherited none
+                        style={{ pointerEvents: "none" }}
+                        dpr={dpr}
+                        frameloop={frameloop}
+                        camera={{ position: [0, 0, SCENE_PRESETS.hero.cameraDepth] }}
+                        gl={{ antialias: !device.isCompact, powerPreference: "high-performance" }}
+                    >
+                        <color attach="background" args={[device.colors.background]} />
+                        <PerformanceMonitor onChange={adaptDpr} onDecline={() => setIsBloomAllowed(false)}>
+                            <NeuralNetwork
+                                scene={activeScene}
+                                primaryColor={device.colors.primary}
+                                count={device.isCompact ? PARTICLES.compact : PARTICLES.wide}
+                                isCompact={device.isCompact}
+                            />
+                            {isAnimated && isBloomAllowed && (
+                                <Suspense fallback={null}>
+                                    <SceneBloom />
+                                </Suspense>
+                            )}
+                        </PerformanceMonitor>
+                    </Canvas>
+                </CanvasBoundary>
+            )}
 
-            <Canvas camera={{ position: [0, 0, 4] }}>
-                <NeuralNetwork count={particleCount} />
-            </Canvas>
+            <div
+                ref={glowRef}
+                style={{ opacity: glowOpacity }}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] will-change-[opacity]"
+            />
         </div>
     );
 }

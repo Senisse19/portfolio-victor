@@ -47,3 +47,50 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary);
 }
+html {
+  scroll-padding-top: 88px;
+}
+
+::selection {
+  color: #fff;
+  background: var(--primary);
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+/* Native <details> used by the project explorer */
+details > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+details > summary::-webkit-details-marker {
+  display: none;
+}
+
+details[open] > summary .details-chevron {
+  transform: rotate(180deg);
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* Unlayered on purpose: it must beat Tailwind utilities such as scroll-smooth and animate-bounce. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+    scroll-behavior: auto;
+  }
+}

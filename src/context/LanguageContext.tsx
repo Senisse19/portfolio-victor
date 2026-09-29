@@ -1,32 +1,52 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
-import { translations, Language } from "@/lib/translations";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import type { Locale } from "@/data/portfolio";
 
-interface LanguageContextProps {
-    language: Language;
-    setLanguage: (lang: Language) => void;
-    t: typeof translations.pt;
+interface LanguageContextValue {
+  language: Locale;
+  setLanguage: (language: Locale) => void;
+  toggleLanguage: () => void;
 }
 
-const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
+const STORAGE_KEY = "victor-portfolio-language";
+const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
 
-export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-    const [language, setLanguage] = useState<Language>("pt");
+export function LanguageProvider({ children }: { children: React.ReactNode }) {
+  const [language, setLanguageState] = useState<Locale>("pt");
 
-    const t = translations[language];
-
-    return (
-        <LanguageContext.Provider value={{ language, setLanguage, t }}>
-            {children}
-        </LanguageContext.Provider>
-    );
-};
-
-export const useLanguage = () => {
-    const context = useContext(LanguageContext);
-    if (!context) {
-        throw new Error("useLanguage must be used within a LanguageProvider");
+  useEffect(() => {
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    if (stored === "pt" || stored === "en") {
+      document.documentElement.lang = stored === "pt" ? "pt-BR" : "en";
+      const frame = window.requestAnimationFrame(() => setLanguageState(stored));
+      return () => window.cancelAnimationFrame(frame);
     }
-    return context;
-};
+  }, []);
+
+  const setLanguage = useCallback((nextLanguage: Locale) => {
+    setLanguageState(nextLanguage);
+    window.localStorage.setItem(STORAGE_KEY, nextLanguage);
+    document.documentElement.lang = nextLanguage === "pt" ? "pt-BR" : "en";
+  }, []);
+
+  const toggleLanguage = useCallback(() => {
+    setLanguage(language === "pt" ? "en" : "pt");
+  }, [language, setLanguage]);
+
+  const value = useMemo(
+    () => ({ language, setLanguage, toggleLanguage }),
+    [language, setLanguage, toggleLanguage],
+  );
+
+  return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
+}
+
+export function useLanguage() {
+  const context = useContext(LanguageContext);
+  if (!context) {
+    throw new Error("useLanguage must be used within a LanguageProvider");
+  }
+
+  return context;
+}

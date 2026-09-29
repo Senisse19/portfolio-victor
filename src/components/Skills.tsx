@@ -1,56 +1,20 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Cpu, Terminal, Database, Globe, Layers, Brain } from "lucide-react";
+import { Brain, Globe, Terminal, Workflow } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { capabilities, siteCopy, type CapabilityGroup } from "@/data/portfolio";
+
+const styles: Record<CapabilityGroup["id"], { icon: React.ReactNode; color: string; bg: string }> = {
+    automation: { icon: <Workflow size={24} />, color: "text-purple-400", bg: "bg-purple-500/10" },
+    fullstack: { icon: <Terminal size={24} />, color: "text-green-400", bg: "bg-green-500/10" },
+    "ai-data": { icon: <Brain size={24} />, color: "text-blue-400", bg: "bg-blue-500/10" },
+    "infra-growth": { icon: <Globe size={24} />, color: "text-orange-400", bg: "bg-orange-500/10" },
+};
 
 export default function Skills() {
-    const { t } = useLanguage();
-
-    const skillsData = [
-        {
-            category: t.skills.categories.aiArch,
-            icon: <Brain size={24} />,
-            items: ["AI Agents", "RAG Pipelines", "Prompt Engineering", "n8n", "LangChain", "Multi-Agentes"],
-            color: "text-purple-400",
-            bg: "bg-purple-500/10",
-        },
-        {
-            category: t.skills.categories.llms,
-            icon: <Cpu size={24} />,
-            items: ["OpenAI API", "Google Gemini", "Anthropic", "Cursor", "Lovable", "Google Antigravity"],
-            color: "text-blue-400",
-            bg: "bg-blue-500/10",
-        },
-        {
-            category: t.skills.categories.fullstack,
-            icon: <Terminal size={24} />,
-            items: ["React", "Next.js", "TypeScript", "Node.js", "Python", "JavaScript", "Progress 4GL"],
-            color: "text-green-400",
-            bg: "bg-green-500/10",
-        },
-        {
-            category: t.skills.categories.data,
-            icon: <Database size={24} />,
-            items: ["PostgreSQL", "Supabase", "Redis", "Power BI", "Looker Studio", "Docker"],
-            color: "text-cyan-400",
-            bg: "bg-cyan-500/10",
-        },
-        {
-            category: t.skills.categories.cloud,
-            icon: <Globe size={24} />,
-            items: ["Azure", "Google Cloud", "Cloudflare", "Git", "GitHub", "Active Directory"],
-            color: "text-orange-400",
-            bg: "bg-orange-500/10",
-        },
-        {
-            category: t.skills.categories.tools,
-            icon: <Layers size={24} />,
-            items: ["Scrum", "Kanban", "Jira", "Trello", "Bitrix24", "Airtable"],
-            color: "text-pink-400",
-            bg: "bg-pink-500/10",
-        },
-    ];
+    const { language } = useLanguage();
+    const copy = siteCopy[language];
 
     return (
         <section id="skills" className="py-16 md:py-24 bg-surface/30 relative">
@@ -62,15 +26,15 @@ export default function Skills() {
                     className="text-center mb-16"
                 >
                     <div className="inline-block px-3 py-1 bg-surface rounded-full text-blue-400 text-sm font-medium mb-4">
-                        {t.skills.badge}
+                        {copy.sections.capabilitiesEyebrow}
                     </div>
-                    <h2 className="text-2xl md:text-5xl font-bold text-white">{t.skills.title}</h2>
+                    <h2 className="text-2xl md:text-5xl font-bold text-white">{copy.sections.capabilitiesTitle}</h2>
                 </motion.div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                    {skillsData.map((skill, index) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                    {capabilities.map((group, index) => (
                         <motion.div
-                            key={index}
+                            key={group.id}
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
@@ -78,14 +42,15 @@ export default function Skills() {
                             whileHover={{ y: -5 }}
                             className="bg-surface border border-white/5 rounded-2xl p-5 md:p-6 hover:border-primary/30 transition-all shadow-lg hover:shadow-xl"
                         >
-                            <div className={`w-12 h-12 ${skill.bg} ${skill.color} rounded-lg flex items-center justify-center mb-6`}>
-                                {skill.icon}
+                            <div className={`w-12 h-12 ${styles[group.id].bg} ${styles[group.id].color} rounded-lg flex items-center justify-center mb-6`}>
+                                {styles[group.id].icon}
                             </div>
-                            <h3 className="text-lg md:text-xl font-bold text-white mb-4">{skill.category}</h3>
+                            <h3 className="text-lg md:text-xl font-bold text-white mb-2">{group.title[language]}</h3>
+                            <p className="text-gray-400 text-sm md:text-base mb-4">{group.description[language]}</p>
                             <div className="flex flex-wrap gap-2">
-                                {skill.items.map((item, i) => (
+                                {group.items.map((item) => (
                                     <span
-                                        key={i}
+                                        key={item}
                                         className="px-3 py-1 bg-background rounded-full text-xs font-medium text-gray-300 border border-white/5"
                                     >
                                         {item}

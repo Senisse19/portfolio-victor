@@ -12,6 +12,15 @@
 
 # testing
 /coverage
+/test-results/
+/playwright-report/
+
+# local visual and PDF QA artifacts
+/tmp/
+/output/
+
+# Claude Code local scratch (planning notes, not site content)
+/.claude/tmp/
 
 # next.js
 /.next/
